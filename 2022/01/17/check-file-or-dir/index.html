@@ -20,28 +20,33 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="AllZ">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="在语音引擎中需要根据传入的路径加载配置文件，希望能兼容传入目录&#x2F;文件的情况，需要对传入的参数进行判断 123456789101112131415161718192021222324252627282930&#x2F;&#x2F; &lt;sys&#x2F;stat.h&gt;struct stat &amp;#123;	dev_t           st_dev;         &#x2F;* [XSI] ID of device cont">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「C&#x2F;C++」判断某一路径是文件或是目录">
+<meta property="og:url" content="http://example.com/2022/01/17/check-file-or-dir/index.html">
 <meta property="og:site_name" content="AllZ">
+<meta property="og:description" content="在语音引擎中需要根据传入的路径加载配置文件，希望能兼容传入目录&#x2F;文件的情况，需要对传入的参数进行判断 123456789101112131415161718192021222324252627282930&#x2F;&#x2F; &lt;sys&#x2F;stat.h&gt;struct stat &amp;#123;	dev_t           st_dev;         &#x2F;* [XSI] ID of device cont">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-17T08:02:37.000Z">
+<meta property="article:modified_time" content="2022-01-17T08:16:02.197Z">
 <meta property="article:author" content="AllZ">
+<meta property="article:tag" content="C&#x2F;C++">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2022/01/17/check-file-or-dir/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>AllZ</title>
+  <title>「C/C++」判断某一路径是文件或是目录 | AllZ</title>
   
 
 
@@ -150,9 +155,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -168,10 +174,9 @@
       <meta itemprop="name" content="AllZ">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/17/check-file-or-dir/" class="post-title-link" itemprop="url">「C/C++」判断某一路径是文件或是目录</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          「C/C++」判断某一路径是文件或是目录
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -208,7 +213,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>在语音引擎中需要根据传入的路径加载配置文件，希望能兼容传入目录/文件的情况，需要对传入的参数进行判断</p>
+        <p>在语音引擎中需要根据传入的路径加载配置文件，希望能兼容传入目录/文件的情况，需要对传入的参数进行判断</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// &lt;sys/stat.h&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">	<span class="keyword">dev_t</span>           st_dev;         <span class="comment">/* [XSI] ID of device containing file */</span></span><br><span class="line">	<span class="keyword">ino_t</span>           st_ino;         <span class="comment">/* [XSI] File serial number */</span></span><br><span class="line">	<span class="keyword">mode_t</span>          st_mode;        <span class="comment">/* [XSI] Mode of file (see below) */</span></span><br><span class="line">	<span class="keyword">nlink_t</span>         st_nlink;       <span class="comment">/* [XSI] Number of hard links */</span></span><br><span class="line">	<span class="keyword">uid_t</span>           st_uid;         <span class="comment">/* [XSI] User ID of the file */</span></span><br><span class="line">	<span class="keyword">gid_t</span>           st_gid;         <span class="comment">/* [XSI] Group ID of the file */</span></span><br><span class="line">	<span class="keyword">dev_t</span>           st_rdev;        <span class="comment">/* [XSI] Device ID */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span>  <span class="title">timespec</span> <span class="title">st_atimespec</span>;</span>  <span class="comment">/* time of last access */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span>  <span class="title">timespec</span> <span class="title">st_mtimespec</span>;</span>  <span class="comment">/* time of last data modification */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span>  <span class="title">timespec</span> <span class="title">st_ctimespec</span>;</span>  <span class="comment">/* time of last status change */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">	<span class="keyword">time_t</span>          st_atime;       <span class="comment">/* [XSI] Time of last access */</span></span><br><span class="line">	<span class="keyword">long</span>            st_atimensec;   <span class="comment">/* nsec of last access */</span></span><br><span class="line">	<span class="keyword">time_t</span>          st_mtime;       <span class="comment">/* [XSI] Last data modification time */</span></span><br><span class="line">	<span class="keyword">long</span>            st_mtimensec;   <span class="comment">/* last data modification nsec */</span></span><br><span class="line">	<span class="keyword">time_t</span>          st_ctime;       <span class="comment">/* [XSI] Time of last status change */</span></span><br><span class="line">	<span class="keyword">long</span>            st_ctimensec;   <span class="comment">/* nsec of last status change */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="keyword">off_t</span>           st_size;        <span class="comment">/* [XSI] file size, in bytes */</span></span><br><span class="line">	<span class="keyword">blkcnt_t</span>        st_blocks;      <span class="comment">/* [XSI] blocks allocated for file */</span></span><br><span class="line">	<span class="keyword">blksize_t</span>       st_blksize;     <span class="comment">/* [XSI] optimal blocksize for I/O */</span></span><br><span class="line">	<span class="keyword">__uint32_t</span>      st_flags;       <span class="comment">/* user defined flags for file */</span></span><br><span class="line">	<span class="keyword">__uint32_t</span>      st_gen;         <span class="comment">/* file generation number */</span></span><br><span class="line">	<span class="keyword">__int32_t</span>       st_lspare;      <span class="comment">/* RESERVED: DO NOT USE! */</span></span><br><span class="line">	<span class="keyword">__int64_t</span>       st_qspare[<span class="number">2</span>];   <span class="comment">/* RESERVED: DO NOT USE! */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>可以通过函数<code>stat</code>获得上述结构体信息，并通过<code>st_mode</code>判断</p>
@@ -221,175 +226,34 @@
 
 <p>相比与之前采用的通过路径可执行权限进行判断更加鲁棒</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="number">0</span> == <span class="built_in">access</span>(path.<span class="built_in">c_str</span>(), X_OK)) &#123;</span><br><span class="line">    <span class="comment">// dir</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == <span class="built_in">access</span>(path.<span class="built_in">c_str</span>(), F_OK)) &#123;</span><br><span class="line">    <span class="comment">// file</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/16/LibTorch%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="AllZ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="AllZ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/16/LibTorch%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">LibTorch使用记录</a>
-        </h2>
+          <div class="post-tags">
+              <a href="/tags/C-C/" rel="tag"><i class="fa fa-tag"></i> C/C++</a>
+          </div>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-01-16 20:13:52 / 修改时间：20:15:55" itemprop="dateCreated datePublished" datetime="2022-01-16T20:13:52+08:00">2022-01-16</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>为了快速在C++算法引擎中验证PyTorch模型的效果，尝试集成libtorch，仅在Linux服务器上加载模型并进行前向运算</p>
-<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>从<a target="_blank" rel="noopener" href="https://pytorch.org/">PyTorch官网</a>下载对应版本并解压，如最新版本不匹配CUDA版本，可以从<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43742643/article/details/114156298">这里</a>找到历史版本，为了防止该博客无法访问，将内容粘贴至  <a href="#Appendices">Appendices</a> 中</p>
-<p><strong>如果要使用CUDA，则必须与机器的CUDA版本完全一致，小版本号不一样也可能无法启用CUDA</strong></p>
-<p>cmake中添加</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(CMAKE_PREFIX_PATH <span class="string">&quot;/path/to/libtorch&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">find_package</span>(Torch REQUIRED)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;$&#123;CMAKE_CXX_FLAGS&#125; $&#123;TORCH_CXX_FLAGS&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(example-app example-app.cpp)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(example-app <span class="string">&quot;$&#123;TORCH_LIBRARIES&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">set_property</span>(<span class="keyword">TARGET</span> example-app PROPERTY CXX_STANDARD <span class="number">14</span>)</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/16/LibTorch%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/16/kaldi-feature/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="AllZ">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="AllZ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/16/kaldi-feature/" class="post-title-link" itemprop="url">【Kaldi源码学习】Online Feature Pipeline</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-01-16 18:36:24 / 修改时间：19:41:48" itemprop="dateCreated datePublished" datetime="2022-01-16T18:36:24+08:00">2022-01-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kaldi/" itemprop="url" rel="index"><span itemprop="name">Kaldi</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src/online2/online-nnet2-feature-pipeline.h</span><br></pre></td></tr></table></figure>
-
-<h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>继承自 <code>OnlineFeatureInterface</code>，几个常用接口</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">int32 <span class="title">NumFramesReady</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">GetFrame</span><span class="params">(int32 frame, VectorBase&lt;BaseFloat&gt; *feat)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SetCmvnState</span><span class="params">(<span class="keyword">const</span> OnlineCmvnState &amp;cmvn_state)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AcceptWaveform</span><span class="params">(BaseFloat sampling_rate,</span></span></span><br><span class="line"><span class="params"><span class="function">                      <span class="keyword">const</span> VectorBase&lt;BaseFloat&gt; &amp;waveform)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InputFinished</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注：</p>
-<p>调用了 <code>InputFinished</code> 后不能继续传入音频，如果需要，则要重新创建一个 <code>OnlineNnet2FeaturePipeline</code> 对象，否则会报出如下错误</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AcceptWaveform called after InputFinished() was called</span><br></pre></td></tr></table></figure>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/16/kaldi-feature/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/16/LibTorch%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/" rel="prev" title="LibTorch使用记录">
+      <i class="fa fa-chevron-left"></i> LibTorch使用记录
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-
   
 
 
